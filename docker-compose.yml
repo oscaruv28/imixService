@@ -1,0 +1,15 @@
+version: '3.8'
+services:
+  redis:
+    image: redis:alpine
+    container_name: imix-redis
+    ports:
+      - "6379:6379"
+
+  mongodb:
+    image: mongo:latest
+    container_name: imix-mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: imix_db

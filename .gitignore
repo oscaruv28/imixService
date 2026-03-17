@@ -1,0 +1,35 @@
+# --- Node.js / NestJS / Angular ---
+node_modules/
+dist/
+.npm
+/client/dist/
+/client/.angular/
+
+# --- Variables de Entorno (SEGURIDAD) ---
+# Jamás subas tus credenciales de MongoDB o JWT Secret a Git
+.env
+*.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# --- TypeScript ---
+*.tsbuildinfo
+
+# --- Logs ---
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# --- IDEs / Editores ---
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# --- Cobertura de Pruebas ---
+coverage/

@@ -1,0 +1,38 @@
+# --- General ---
+node_modules/
+.DS_Store
+dist/
+build/
+.env
+*.env
+auth.key
+*.log
+
+# --- API Gateway (NestJS) ---
+/apps/api-gateway/node_modules/
+/apps/api-gateway/dist/
+
+# --- Auth SSO (NestJS + Redis config) ---
+/apps/auth-sso/node_modules/
+/apps/auth-sso/dist/
+
+# --- Credits Backend (NestJS + MongoDB config) ---
+/apps/credits-backend/node_modules/
+/apps/credits-backend/dist/
+
+# --- Frontend Angular (Client) ---
+/client/.angular/
+/client/node_modules/
+/client/dist/
+/client/.editorconfig
+/client/.vscode/
+
+# --- Infraestructura y DB ---
+# No subir datos locales de las bases de datos si usas volúmenes de Docker
+/infrastructure/mongo-data/
+/infrastructure/redis-data/
+
+# --- IDEs ---
+.vscode/
+.idea/
+*.swp
