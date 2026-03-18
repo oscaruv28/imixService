@@ -1,0 +1,63 @@
+<div class="min-h-screen bg-slate-50 p-6">
+  <div class="max-w-2xl mx-auto">
+    <div class="flex justify-between items-center mb-8 bg-white p-4 rounded-xl shadow-sm border border-slate-100">
+      <h1 class="text-xl font-bold text-blue-900">InclusionScore <span class="text-blue-500">AI</span></h1>
+      <button (click)="logout()" class="text-sm font-medium text-red-500 hover:text-red-700 transition-colors bg-red-50 px-3 py-1.5 rounded-lg">
+        Cerrar Sesión →
+      </button>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100">
+      <div class="p-8">
+        <h2 class="text-2xl font-bold text-gray-800 mb-2">Solicitud de Micro-crédito</h2>
+        <p class="text-gray-500 mb-6 text-sm">Ingrese el monto para el análisis de riesgo con IA.</p>
+
+        <div class="space-y-6">
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">Monto Solicitado (COP)</label>
+            <div class="relative">
+              <span class="absolute left-4 top-3 text-gray-400 font-medium">$</span>
+              <input type="number" [(ngModel)]="monto" 
+                class="w-full pl-8 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all text-lg font-medium"
+                placeholder="0.00">
+            </div>
+          </div>
+
+          <button (click)="enviar()" [disabled]="loading || monto <= 0"
+            class="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-lg shadow-lg shadow-blue-100 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+            <span *ngIf="loading" class="animate-spin inline-block w-5 h-5 border-2 border-white border-t-transparent rounded-full"></span>
+            {{ loading ? 'Analizando Score...' : 'Procesar con IA' }}
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="resultado" class="border-t border-gray-100 bg-gray-50 p-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div class="bg-white p-6 rounded-2xl border border-blue-100 shadow-sm">
+          <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+            <span class="p-2 bg-blue-50 rounded-lg text-blue-600">📊</span>
+            Resultado del Análisis
+          </h3>
+          
+          <div class="grid grid-cols-2 gap-4">
+            <div class="p-4 bg-slate-50 rounded-xl">
+              <p class="text-xs text-gray-400 uppercase font-bold tracking-wider">Estado de Solicitud</p>
+              <p class="text-lg font-bold text-amber-600 capitalize">
+                {{ resultado.status }}
+              </p>
+            </div>
+            <div class="p-4 bg-slate-50 rounded-xl">
+              <p class="text-xs text-gray-400 uppercase font-bold tracking-wider">Monto Registrado</p>
+              <p class="text-lg font-bold text-blue-600">${{ resultado.amount | number }}</p>
+            </div>
+          </div>
+          
+          <div class="mt-4 p-4 bg-blue-50/50 rounded-xl border border-blue-100">
+            <p class="text-xs text-blue-800 font-semibold mb-1 uppercase">ID de Transacción:</p>
+            <p class="text-xs text-blue-900 font-mono break-all">{{ resultado.id }}</p>
+            <p class="text-[10px] text-blue-400 mt-2 italic">La IA está procesando los datos del solicitante {{ resultado.applicantId }}...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

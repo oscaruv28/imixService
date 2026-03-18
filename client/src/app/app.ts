@@ -1,42 +1,39 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { AuthService } from './auth.service';
 import { CreditService } from './credit.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.html',
-  standalone: false,
+  styleUrls: ['./app.scss'],
+  standalone: false
 })
-export class App {
-  // Login
-  email = '';
-  password = '';
-  // Credito
-  monto = 0;
-  // Estados
-  loading = false;
-  error = '';
-  resultado: any = null;
+export class App implements OnInit {
+  email = ''; password = ''; monto = 0;
+  loading = false; error = ''; resultado: any = null;
 
   constructor(
     private authService: AuthService,
-    private creditService: CreditService
+    private creditService: CreditService,
+    private router: Router
   ) {}
 
-  isLoggedIn() {
-    return !!this.authService.getToken();
+  ngOnInit() {
+    if (this.authService.getToken()) {
+      this.router.navigate(['/credit']);
+    }
   }
 
   login() {
     this.loading = true;
-    this.error = '';
     this.authService.login(this.email, this.password).subscribe({
       next: () => {
         this.loading = false;
-        console.log("Login exitoso");
+        this.router.navigate(['/credit']);
       },
       error: () => {
-        this.error = "Credenciales inválidas";
+        this.error = "Acceso denegado";
         this.loading = false;
       }
     });
@@ -44,14 +41,13 @@ export class App {
 
   enviarCredito() {
     this.loading = true;
-    this.error = '';
-    this.creditService.enviarSolicitud({ monto: this.monto, clienteId: 'CLI-99' }).subscribe({
+    this.creditService.enviarSolicitud({ amount: this.monto }).subscribe({
       next: (res) => {
         this.resultado = res;
         this.loading = false;
       },
-      error: (err) => {
-        this.error = "Error de sesión o conexión. Intenta login de nuevo.";
+      error: () => {
+        this.error = "Error en la solicitud";
         this.loading = false;
       }
     });
@@ -59,6 +55,10 @@ export class App {
 
   logout() {
     localStorage.removeItem('token');
-    this.resultado = null;
+    this.router.navigate(['/login']);
+  }
+
+  isRoute(route: string) {
+    return this.router.url.includes(route);
   }
 }

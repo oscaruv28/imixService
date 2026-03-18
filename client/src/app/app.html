@@ -1,38 +1,9 @@
-<div style="padding: 20px; font-family: sans-serif; max-width: 400px; margin: auto;">
-  
-  <h1 style="color: #2c3e50;">InclusionScore AI</h1>
+<div class="main-container">
+  <header>
+    <!-- <h1>InclusionScore AI</h1> -->
+  </header>
 
-  <div *ngIf="!isLoggedIn()" style="border: 1px solid #ddd; padding: 20px; border-radius: 8px;">
-    <h3>🔑 Acceso Corresponsal</h3>
-    <input type="email" [(ngModel)]="email" placeholder="Email" style="width: 100%; margin-bottom: 10px; padding: 8px;">
-    <input type="password" [(ngModel)]="password" placeholder="Contraseña" style="width: 100%; margin-bottom: 10px; padding: 8px;">
-    
-    <button (click)="login()" [disabled]="loading" style="width: 100%; padding: 10px; background: #3498db; color: white; border: none; cursor: pointer;">
-      {{ loading ? 'Autenticando...' : 'Entrar' }}
-    </button>
-  </div>
+  <router-outlet></router-outlet>
 
-  <div *ngIf="isLoggedIn()">
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-      <span>Sesión activa ✅</span>
-      <button (click)="logout()" style="font-size: 10px;">Salir</button>
-    </div>
-    <hr>
-    
-    <h3>📝 Solicitar Crédito</h3>
-    <label>Monto:</label>
-    <input type="number" [(ngModel)]="monto" style="width: 100%; margin-bottom: 10px; padding: 8px;">
-    
-    <button (click)="enviarCredito()" [disabled]="loading" style="width: 100%; padding: 10px; background: #27ae60; color: white; border: none; cursor: pointer;">
-      {{ loading ? 'Analizando con IA...' : 'Procesar Crédito' }}
-    </button>
-  </div>
-
-  <div *ngIf="resultado" style="margin-top: 20px; background: #f9f9f9; padding: 15px; border-left: 5px solid #27ae60;">
-    <h4>Resultado scoring:</h4>
-    <pre>{{ resultado | json }}</pre>
-  </div>
-
-  <p *ngIf="error" style="color: red; font-size: 12px; margin-top: 10px;">{{ error }}</p>
-
+  <p *ngIf="error" class="error-msg">{{ error }}</p>
 </div>
