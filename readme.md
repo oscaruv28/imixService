@@ -127,3 +127,35 @@ Una vez que los servicios estén arriba y el SSO inicializado, puedes acceder a 
 
 5. SWAGGER DOCUMENTATION
 Una vez se corran los servicios del backend se pueden probar en swagger los endpoints configurados, hay un endpoint get para ver que si se guardan las peticiones de credito en la db con el id del usuario que genero el token
+
+
+
+RESPONDE BREVEMMENTE
+Parte 4 – Criterio técnico
+¿Cuál sería el mejor modelo de despliegue para esta solución?
+El modelo ideal es una arquitectura contenerizada usando Docker, orquestada mediante un clúster de Kubernetes (K8s) en la nube (AWS/GCP/Azure). Esto permite gestionar los microservicios de forma independiente, aplicar auto-escalado horizontal basado en métricas (CPU/RAM) y garantizar alta disponibilidad.
+
+¿Cómo esta solución es escalable en volúmenes transaccionales, concurrencia y datos?
+
+Transacciones y Concurrencia: Al ser stateless (usando JWT), los pods de NestJS pueden multiplicarse horizontalmente sin problemas de sesión. El API Gateway distribuye la carga.
+
+Datos: La estrategia de Data Hydration con Redis absorbe los picos de lectura durante la concurrencia masiva. Para el almacenamiento a largo plazo, MongoDB permite sharding (fragmentación) para escalar horizontalmente bases de datos de gran volumen.
+
+¿Qué mejorarías en producción?
+
+Autenticación: Reemplazaría el microservicio simulado (auth-sso) por un servidor de identidad federado real (como Keycloak o Auth0) usando OpenID Connect.
+
+Procesamiento Asíncrono: Extraería el motor de IA a un worker independiente y usaría un Message Broker (como RabbitMQ o Kafka) para encolar las solicitudes, evitando que consultas lentas bloqueen la API principal.
+
+CI/CD y Monitoreo: Implementaría pipelines automáticos de despliegue y herramientas de observabilidad (Datadog, Prometheus/Grafana) para trazar las peticiones entre microservicios.
+
+¿Dónde pondrías límites de responsabilidad entre servicios?
+Establecería fronteras estrictas:
+
+API Gateway: Se encarga solo del enrutamiento, validación del token JWT y limitación de peticiones (Rate Limiting). Cero lógica de negocio.
+
+Servicio de SSO: Se encarga solo de validar credenciales y emitir tokens.
+
+Backend de Créditos (Orquestador): Aplica reglas de negocio, coordina las bases de datos y orquesta el flujo, pero no hace los cálculos matemáticos pesados.
+
+Motor de IA: Recibe un payload limpio del backend, calcula el score de riesgo y devuelve el resultado. No sabe de dónde viene el usuario ni cómo se autenticó.
