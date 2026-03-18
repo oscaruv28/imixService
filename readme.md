@@ -1,3 +1,5 @@
+DESARROLLO TÉCNICO PRUEBA IMIX
+
 1. Definición del Problema y Solución
 El proyecto aborda la falta de historial crediticio tradicional en sectores no bancarizados. La solución consiste en una plataforma digital que permite capturar solicitudes de microcrédito y procesarlas mediante un motor de Inteligencia Artificial. El sistema analiza datos de comportamiento transaccional para generar una respuesta de aprobación o rechazo de forma inmediata y automatizada.
 
@@ -57,8 +59,69 @@ imixService/
 │   └── ...
 │
 ├── 📂 docs/                 <-- (Diagramas de arquitectura y diseño)
-│   └── 🖼️ arquitectura.png
-│
-└── 📂 infrastructure/       <-- (Configuraciones de DB y Scripts)
-    ├── 📂 mongo-init/
-    └── 📂 redis-config/
+   └── 🖼️ arquitectura.png
+
+
+INSTALACION Y DESPLIEGUE
+## Instalación y Despliegue Local
+Este proyecto utiliza una arquitectura de microservicios desacoplados. Para levantar el entorno de desarrollo localmente, sigue estos pasos:
+
+### 1. Instalación de Dependencias
+Es necesario instalar los paquetes de Node (`node_modules`) de manera independiente para el cliente y para cada uno de los microservicios. Desde la raíz del proyecto (`imixService/`), ejecuta:
+
+**Capa de Cliente (Angular):**
+```bash
+cd client
+npm install
+cd ..
+Capa de Negocio y Acceso (NestJS):
+
+Bash
+cd imixservice --> para el api-gateway
+npm install
+cd ../..
+
+cd apps/auth-sso
+npm install
+cd ../..
+
+cd apps/credits-backend
+npm install
+cd ../..
+
+2. Levantar la Instancia (Docker)
+Toda la infraestructura (MongoDB, Redis, API Gateway y microservicios) está orquestada mediante Docker. Asegúrate de tener el demonio de Docker en ejecución y corre el siguiente comando desde la raíz del proyecto (imixService/):
+
+Bash
+docker-compose up -d --build
+(Nota: El flag -d levanta los contenedores en segundo plano. Si deseas monitorear los logs en tiempo real para verificar el flujo de hidratación de datos en Redis, utiliza docker-compose logs -f).
+
+
+3. Arranque en Modo Desarrollo (Manual)
+Si deseas levantar el entorno de desarrollo para editar código en tiempo real, deberás abrir una terminal para cada servicio y ejecutar sus respectivos comandos de arranque:
+
+Terminal 1 - Frontend (Angular):
+
+Bash
+cd client
+npm start
+Terminal 2 - API Gateway:
+
+Bash
+cd apps/api-gateway
+npm run start:dev
+Terminal 3 - Servicio de Autenticación (SSO):
+
+Bash
+cd apps/auth-sso
+npm run start:dev
+Terminal 4 - Backend de Créditos:
+
+Bash
+cd apps/credits-backend
+npm run start:dev
+
+4. Credenciales de Acceso por Defecto
+Una vez que los servicios estén arriba y el SSO inicializado, puedes acceder a la interfaz de InclusionScore AI utilizando el superusuario administrador preconfigurado:
+- Usuario: admin
+- Contraseña: password123
