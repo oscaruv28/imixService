@@ -149,6 +149,8 @@ Procesamiento Asíncrono: Extraería el motor de IA a un worker independiente y 
 
 CI/CD y Monitoreo: Implementaría pipelines automáticos de despliegue y herramientas de observabilidad (Datadog, Prometheus/Grafana) para trazar las peticiones entre microservicios.
 
+Dejaría en api-gateway mas separado, en la prueba esta ligado a la raiz lo cual dificulkta la separación de respobnsabilidades. Por eso es que el api-gatway se corre desde la raiz. Por cuestipon de tiempo no lo cambié pero seria un punto a mejorar en producción. El uso de Nest/cli fue el inconveniente.
+
 ¿Dónde pondrías límites de responsabilidad entre servicios?
 Establecería fronteras estrictas:
 
