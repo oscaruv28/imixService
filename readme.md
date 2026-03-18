@@ -124,3 +124,6 @@ npm run start:dev
 Una vez que los servicios estén arriba y el SSO inicializado, puedes acceder a la interfaz de InclusionScore AI utilizando el superusuario administrador preconfigurado:
 - Usuario: admin
 - Contraseña: password123
+
+5. SWAGGER DOCUMENTATION
+Una vez se corran los servicios del backend se pueden probar en swagger los endpoints configurados, hay un endpoint get para ver que si se guardan las peticiones de credito en la db con el id del usuario que genero el token
