@@ -101,22 +101,21 @@ docker-compose up -d --build
 Si deseas levantar el entorno de desarrollo para editar código en tiempo real, deberás abrir una terminal para cada servicio y ejecutar sus respectivos comandos de arranque:
 
 Terminal 1 - Frontend (Angular):
-
 Bash
 cd client
 npm start
+
 Terminal 2 - API Gateway:
-
 Bash
-cd apps/api-gateway
-npm run start:dev
-Terminal 3 - Servicio de Autenticación (SSO):
+# Como las dependencias están en la raíz, el script se corre desde aquí
+npm run start:dev api-gateway
 
+Terminal 3 - Servicio de Autenticación (SSO):
 Bash
 cd apps/auth-sso
 npm run start:dev
-Terminal 4 - Backend de Créditos:
 
+Terminal 4 - Backend de Créditos:
 Bash
 cd apps/credits-backend
 npm run start:dev
