@@ -1,25 +1,53 @@
-1. Definición del Problema (Enfoque Cliente)Proyecto: InclusionScore AI - Sistema de Originación de Micro-créditos de Última Milla.Problema: En zonas rurales, los clientes no tienen historial crediticio bancario, lo que les impide acceder a capital para sus negocios.Solución: Una plataforma que permite a un corresponsal (tendero) solicitar un crédito para un cliente. El sistema usa IA para analizar datos de comportamiento transaccional en el punto de venta y generar una aprobación inmediata.
+1. Definición del Problema y Solución
+El proyecto aborda la falta de historial crediticio tradicional en sectores no bancarizados. La solución consiste en una plataforma digital que permite capturar solicitudes de microcrédito y procesarlas mediante un motor de Inteligencia Artificial. El sistema analiza datos de comportamiento transaccional para generar una respuesta de aprobación o rechazo de forma inmediata y automatizada.
 
-2. Arquitectura del Servicio Se propone una arquitectura de Microservicios Desacoplados con un enfoque de seguridad perimetral.Componentes:Frontend (Angular): Interfaz para el corresponsal.API Gateway: Único punto de entrada; maneja la seguridad y ruteo.SSO (Auth Service): Gestión de identidad y emisión de JWT.Backend (NestJS): Lógica de negocio (procesamiento de créditos).IA Mock Service: Simulación de scoring alternativo.Persistencia: MongoDB (Histórico) y Redis (Caché de datos sensibles).
+2. Arquitectura de Sistema y Capas
+La solución se basa en una Arquitectura de Microservicios Desacoplados, organizada en las siguientes capas funcionales:
 
-3. Flujo de la Solicitud Autenticación: El corresponsal se loguea vía SSO. Al autenticarse, el SSO precarga los datos sensibles del perfil del corresponsal y del cliente en Redis.Solicitud: El frontend envía el monto y ID del cliente al API Gateway con el JWT.Seguridad (La respuesta a tu pregunta): El Gateway valida el token. Si es válido, recupera los datos de Redis y los inyecta en los headers de la petición hacia el backend. El backend de NestJS procesa la solicitud sin necesidad de validar credenciales nuevamente.Enriquecimiento con IA: El backend llama al servicio de IA, que utiliza los datos inyectados para generar un score.Respuesta: El resultado se guarda en MongoDB y se retorna al frontend.
+Capa de Cliente: Interfaz desarrollada en Angular con lógica de renderizado adaptativo para entornos Web y Móvil.
 
-4. Protección de Información Sensible ¿Dónde va la seguridad?: La seguridad reside en la intersección entre el SSO y el API Gateway.Privacidad: Los datos sensibles necesarios para el scoring (como el historial detallado de compras) residen en Redis. El frontend nunca recibe estos datos; solo envía una "llave" (ID) y recibe un "resultado" (Aprobado/Rechazado).Backend Agnóstico: Al usar el Gateway como mediador, el código del backend de NestJS es más limpio y enfocado solo en el negocio de crédito, cumpliendo con la restricción de "no tener conciencia de seguridad".
+Capa de Acceso (API Gateway): Punto de entrada único que gestiona el ruteo, la seguridad perimetral y la transformación de peticiones.
 
-5. Enfoque Multi-Interfaz (Web vs Móvil) Estrategia: Se utiliza un patrón de Componentes Desacoplados de la Capa de Estilo.Implementación: Una base de código compartida en Angular que, mediante inyección de dependencias o selectores de entorno, aplica hojas de estilo (SCSS) específicas: una con enfoque "Touch-First" para dispositivos móviles (look & feel nativo) y otra con enfoque de "Dashboard" para web.
+Capa de Negocio (Backend): Servicios en NestJS encargados de la orquestación de créditos y la ejecución del motor de IA.
 
-6. Manejo de Errores y Escalabilidad Errores: Interceptores globales para mapear errores técnicos a mensajes de negocio amigables para el tendero.Escalabilidad: Al estar en contenedores, el servicio de procesamiento puede escalar horizontalmente según el volumen de solicitudes de crédito en horas pico.
+Capa de Datos: Persistencia documental en MongoDB y una capa de aceleración en memoria con Redis.
 
+3. Flujo de Operación y Enriquecimiento de Datos
+Para optimizar el rendimiento y cumplir con la restricción de no saturar la base de datos principal, se implementa un flujo de hidratación de datos:
+
+Autenticación: Al iniciar sesión, el servicio de identidad (SSO) recupera el perfil del usuario de MongoDB y lo almacena en Redis.
+
+Solicitud: El cliente envía solo el monto y su identificador mediante un token JWT.
+
+Intervención del Gateway: El API Gateway valida el token, extrae la información sensible desde Redis y la inyecta en los encabezados de la petición hacia el backend.
+
+Procesamiento: El backend recibe la data enriquecida y dispara el motor de IA. El resultado final se persiste en MongoDB y se notifica al cliente.
+
+4. Seguridad y Protección de Información Sensible
+La seguridad se centraliza en el API Gateway, lo que permite que los servicios internos sean agnósticos a la lógica de autenticación. La información confidencial (ingresos, historial detallado) reside exclusivamente en el servidor (Redis/MongoDB) y nunca es expuesta al Frontend. El cliente solo interactúa con identificadores y resultados procesados, garantizando la privacidad de los datos del solicitante en todo momento.
+
+5. Estrategia Multi-Interfaz (Web y Móvil)
+Se utiliza un enfoque de Componentes Desacoplados de la Capa de Estilo. El sistema comparte una única base de lógica de negocio y servicios de datos en Angular, pero aplica hojas de estilo y plantillas diferenciadas según la plataforma. Esto permite ofrecer una experiencia táctil nativa en dispositivos móviles y un panel de gestión robusto en entorno web sin duplicar el código de backend.
+
+6. Manejo de Sesión y Single Sign On (SSO)
+La sesión se gestiona mediante tokens JWT de corta duración para mantener un esquema sin estado (stateless) que facilite el escalado horizontal. La integración de SSO se proyecta bajo el estándar OpenID Connect, donde un servidor de identidad federado gestiona las credenciales. Esto evita que la aplicación de microcréditos almacene datos sensibles de acceso, delegando la responsabilidad a un componente especializado.
+
+7. Escalabilidad y Criterio Técnico en Producción
+Modelo de Despliegue: Uso de contenedores Docker orquestados por Kubernetes para permitir el auto-escalado según la demanda.
+
+Escalabilidad Transaccional: La implementación de Redis reduce drásticamente la latencia de lectura y la carga sobre MongoDB durante picos de concurrencia.
+
+Límites de Responsabilidad: Se establece una separación clara donde el Frontend valida la entrada, el Backend orquesta la transacción y la IA dictamina el riesgo. Cada componente es independiente, lo que facilita el mantenimiento y la evolución tecnológica del sistema.
 
 Arquitectura General
 imixService/
 ├── 📄 README.md             <-- (El diseño, respuestas técnicas y guía de inicio) 
 ├── 📄 docker-compose.yml    <-- (Para levantar MongoDB, Redis y los servicios) [cite: 42,43]
 │
-├── 📂 apps/                 <-- (Aquí viven tus aplicaciones/microservicios)
-│   ├── 📂 api-gateway/      <-- (Opcional: Si decides mockearlo o usar un proxy simple) [cite: 14, 15]
-│   ├── 📂 auth-sso/         <-- (Microservicio NestJS para login y Redis) [cite: 17, 19]
-│   └── 📂 credits-backend/  <-- (Microservicio NestJS principal de créditos) [cite: 2829]
+├── 📂 apps/               
+│   ├── 📂 api-gateway/      
+│   ├── 📂 auth-sso/
+│   └── 📂 credits-backend/
 │
 ├── 📂 client/               <-- (Proyecto Frontend/Angular) 
 │   ├── 📂 src/
@@ -28,7 +56,7 @@ imixService/
 │   │   │   └── 📂 mobile/   <-- (Componentes para Mobile) 
 │   └── ...
 │
-├── 📂 docs/                 <-- (Diagramas de arquitectura y diseño) [cite: 7, 27]
+├── 📂 docs/                 <-- (Diagramas de arquitectura y diseño)
 │   └── 🖼️ arquitectura.png
 │
 └── 📂 infrastructure/       <-- (Configuraciones de DB y Scripts)
